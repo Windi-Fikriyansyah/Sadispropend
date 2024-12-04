@@ -166,8 +166,11 @@
                     <div class="card">
                         <div class="card-body">
                             <h2 class="mb-4 text-center">
-                                {%if form.username.value %}Update{% else %}Add{%
-                                endif %} Customer
+                                {% if form.username.value %}
+        Update Customer
+    {% else %}
+        Add Customer
+    {% endif %}
                             </h2>
                             <form
                                 method="POST"

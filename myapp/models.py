@@ -85,7 +85,7 @@ class TblPurchaseOrder(models.Model):
 
 class TblLedger(models.Model):
     id = models.AutoField(primary_key=True)
-    order_date = models.CharField(max_length=255, null=True, blank=True)
+    order_date = models.DateField(max_length=255, null=True, blank=True)
     customer_name = models.CharField(max_length=255, null=True, blank=True)
     outcome = models.IntegerField(null=True, blank=True)
     income = models.CharField(max_length=255, null=True, blank=True)

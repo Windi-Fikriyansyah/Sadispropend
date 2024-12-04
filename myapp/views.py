@@ -378,7 +378,19 @@ def purchase_order_delete(request, id):
 
 # Read - Display all sales orders
 def ledger_list(request):
-    ledger = TblLedger.objects.all()
+    selected_year = request.GET.get('year')
+
+    # Filter sales orders berdasarkan tahun yang dipilih (jika ada)
+    try:
+        if selected_year and selected_year.isdigit():
+            ledger = TblLedger.objects.filter(order_date__year=int(selected_year))
+        else:
+            ledger = TblLedger.objects.all()
+    except ValueError:
+        # Jika input tidak valid, kembalikan semua data
+        ledger = TblLedger.objects.all()
+
+    # Render template dengan data ledger
     return render(request, 'ledger_list.html', {'ledger': ledger})
 
 # Create - Add a new sales order

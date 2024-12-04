@@ -173,7 +173,7 @@
                         <div class="col-md-4">
                             <center>
                                 <select
-                                    id="yearFilter"
+                                    id="roleFilter"
                                     class="form-select select"
                                     onchange="filterTable()"
                                 >
@@ -185,7 +185,7 @@
                                     <option value="2025">2025</option>
                                     <option value="2026">2026</option>
                                     <option value="2027">2027</option>
-                                    
+
                                 </select>
                             </center>
                         </div>
@@ -205,7 +205,7 @@
                                     id="searchInput"
                                     class="form-control search"
                                     placeholder="Search"
-                                    onkeyup="filterTable()"
+                                    onkeyup="filterTable1()"
                                 />
                             </center>
                         </div>
@@ -280,6 +280,35 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
         <script>
+            function filterTable1() {
+                // Ambil inputan pengguna
+                let input = document.getElementById("searchInput").value.toUpperCase();
+                let table = document.querySelector("table tbody");
+                let rows = table.getElementsByTagName("tr");
+
+                // Iterasi melalui setiap baris tabel
+                for (let i = 0; i < rows.length; i++) {
+                    let cells = rows[i].getElementsByTagName("td");
+                    let match = false;
+
+                    // Cek setiap kolom di baris ini
+                    for (let j = 0; j < cells.length; j++) {
+                        if (cells[j]) {
+                            let text = cells[j].textContent || cells[j].innerText;
+                            if (text.toUpperCase().indexOf(input) > -1) {
+                                match = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    // Tampilkan atau sembunyikan baris
+                    rows[i].style.display = match ? "" : "none";
+                }
+            }
+        </script>
+
+        <script>
             $(document).ready(function() {
                 $('.delete_button').click(function(e) {
                     e.preventDefault();
@@ -293,7 +322,7 @@
                         cancelButtonColor: "#d33",
                         confirmButtonText: "Yes, delete it!",
                     }).then((result) => {
-                        
+
                         form.submit();
                     });
                 });
@@ -301,34 +330,28 @@
         </script>
         <script>
             function filterTable() {
-                const searchInput = document
-                    .getElementById("searchInput")
-                    .value.toLowerCase();
-                const yearFilter = document.getElementById("yearFilter").value;
-                const tableBody = document.getElementById("userTableBody");
-                const rows = tableBody.getElementsByTagName("tr");
+                // Ambil nilai dari dropdown
+                var selectedYear = document.getElementById("roleFilter").value;
 
-                for (let i = 0; i < rows.length; i++) {
-                    const usernameCell = rows[i].getElementsByTagName("td")[0];
-                    const yearCell = rows[i].getElementsByTagName("td")[2];
+                // Debugging: pastikan fungsi dipanggil dengan benar
+                console.log("Selected Year:", selectedYear);
 
-                    if (usernameCell && yearCell) {
-                        const usernameText =
-                            usernameCell.textContent.toLowerCase();
-                        const yearText = yearCell.textContent;
+                // Buat objek URL dari URL saat ini
+                var currentUrl = new URL(window.location.href);
 
-                        const matchesSearch =
-                            usernameText.includes(searchInput);
-                        const matchesYear =
-                            yearFilter === "" || yearText === yearFilter;
-
-                        if (matchesSearch && matchesYear) {
-                            rows[i].style.display = "";
-                        } else {
-                            rows[i].style.display = "none";
-                        }
-                    }
+                // Jika tahun dipilih, tambahkan ke parameter URL
+                if (selectedYear) {
+                    currentUrl.searchParams.set("year", selectedYear);
+                } else {
+                    // Jika tidak ada tahun dipilih, hapus parameter 'year'
+                    currentUrl.searchParams.delete("year");
                 }
+
+                // Debugging: tampilkan URL yang diperbarui
+                console.log("Redirecting to:", currentUrl.toString());
+
+                // Redirect ke URL baru
+                window.location.href = currentUrl.toString();
             }
         </script>
     </body>
