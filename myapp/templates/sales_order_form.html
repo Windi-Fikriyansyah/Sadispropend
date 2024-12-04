@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Sales Order Form</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+        />
+    </head>
+
+    <style>
+        body {
+          background: #ffffff
+          font-family: 'Poppins';
+        }
+
+        .card-custom {
+          padding: 3rem;
+          padding-top: 1.5rem;
+          padding-bottom: 1.5rem;
+          border-radius: 20px;
+        }
+
+        .navbar-brand text-white {
+          font-family: 'Poppins';
+          font-weight: 500;
+        }
+
+        .custom-user {
+          display: flex;
+          align-items: center;
+        }
+
+        .avatar {
+          width: 40px;
+          border-radius: 50%;
+        }
+
+        .logout {
+          border-radius: 20px;
+          padding-right: 20px;
+          padding-left: 20px;
+        }
+
+        .img-dashboard {
+          height: 400px;
+          object-fit: cover;
+          border-radius: 20px;
+        }
+
+        .btn-add {
+          background: #ffffff
+          text-align: center;
+          border: 1px solid #fff;
+          border-radius: 10px;
+          padding-right: 20px;
+          padding-left: 20px;
+        }
+
+        thead {
+          background: #D9D9D9;
+          text-align: center;
+        }
+
+        tbody {
+          background: #F5F5F5;
+          text-align: center;
+        }
+
+        .btn-edit {
+          border: 1px solid #ffc107;
+          background: transparent;
+          color: #ffc107;
+        }
+
+        .btn-delete {
+          border: 1px solid red;
+          color: red;
+          background: transparent;
+        }
+
+        .btn-detail {
+          border: 1px solid #198754;
+          color: #198754;
+          background: transparent;
+        }
+
+        .select {
+          background: #ffffff
+          color: white;
+          border-radius: 10px;
+          text-align: center;
+          width: 150px;
+        }
+
+        .search {
+          border-radius: 20px;
+          width: 200px;
+        }
+
+        label {
+          color: #8E8E93;
+        }
+
+        input {
+          color: #8E8E93;
+        }
+    </style>
+
+    <body>
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-primary">
+            <div class="container-fluid">
+                <div style="margin-right: 2%">
+                    <img
+                        src="/static/logo-dashboard.png"
+                        style="width: 150px"
+                    />
+                </div>
+                <a class="navbar-brand text-white" href="/purchase_orders"
+                    >PURCHASE ORDER</a
+                >
+                <a
+                    class="navbar-brand text-white"
+                    style="margin-left: 1%"
+                    href="/sales_orders"
+                    >SALES ORDER</a
+                >
+                <button
+                    class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav"
+                    aria-controls="navbarNav"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                >
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item custom-user">
+                            <img src="/static/default.jpg" class="avatar" />
+                            <a
+                                class="nav-link text-white"
+                                href="/users/"
+                                style="margin-right: 30px"
+                                >User</a
+                            >
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-danger text-white" href="/logout/"
+                                >Logout</a
+                            >
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container mt-5">
+            <div class="row" style="justify-content: center">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="mb-4 text-center">ADD SALES ORDER</h2>
+                            <form
+                                method="POST"
+                                class="needs-validation"
+                                novalidate
+                            >
+                                {% csrf_token %}
+
+                                <div class="mb-3">
+                                    <label for="order_date" class="form-label"
+                                        >Tanggal Transaksi</label
+                                    >
+                                    <input
+                                        type="date"
+                                        class="form-control"
+                                        id="order_date"
+                                        name="order_date"
+                                        required
+                                        value="{{ form.order_date.value|default:''|date:'Y-m-d' }}"
+                                    />
+                                    <div class="invalid-feedback">
+                                        Please provide a valid order date.
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="order_date" class="form-label"
+                                        >Nomor SO</label
+                                    >
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        id="nomor_so"
+                                        name="nomor_so"
+                                        placeholder="Type here"
+                                        required
+                                        value="{{ form.nomor_so.value|default:''  }}"
+                                        readonly
+                                    />
+                                    <div class="invalid-feedback">
+                                        Please provide a valid nomor so.
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label
+                                        for="customer_name"
+                                        class="form-label"
+                                        >Customer</label
+                                    >
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        id="customer_name"
+                                        name="customer_name"
+                                        placeholder="Type here"
+                                        required
+                                        value="{{ form.customer_name.value|default:'' }}"
+                                    />
+                                    <div class="invalid-feedback">
+                                        Please provide a valid customer name.
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="address" class="form-label"
+                                        >Address</label
+                                    >
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        id="address"
+                                        name="address"
+                                        placeholder="Type here"
+                                        required
+                                        value="{{ form.address.value|default:'' }}"
+                                    />
+                                    <div class="invalid-feedback">
+                                        Please provide a valid address.
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="product" class="form-label"
+                                        >Product</label
+                                    >
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        id="product"
+                                        name="product"
+                                        placeholder="Type here"
+                                        required
+                                        value="{{ form.product.value|default:'' }}"
+                                    />
+                                    <div class="invalid-feedback">
+                                        Please provide a valid product name.
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="quantity" class="form-label"
+                                        >Quantity</label
+                                    >
+                                    <input
+                                        type="number"
+                                        class="form-control"
+                                        id="quantity"
+                                        name="quantity"
+                                        placeholder="Type here"
+                                        required
+                                        value="{{ form.quantity.value|default:'' }}"
+                                        min="1"
+                                    />
+                                    <div class="invalid-feedback">
+                                        Please provide a valid quantity.
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="buy_price" class="form-label"
+                                        >Harga Beli</label
+                                    >
+                                    <input
+                                        type="number"
+                                        step="0.01"
+                                        class="form-control"
+                                        id="buy_price"
+                                        name="buy_price"
+                                        placeholder="Type here"
+                                        required
+                                        value="{{ form.buy_price.value|default:'' }}"
+                                    />
+                                    <div class="invalid-feedback">
+                                        Please provide a valid price.
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="price" class="form-label"
+                                        >Harga Jual</label
+                                    >
+                                    <input
+                                        type="number"
+                                        step="0.01"
+                                        class="form-control"
+                                        id="price"
+                                        name="price"
+                                        placeholder="Type here"
+                                        required
+                                        value="{{ form.price.value|default:'' }}"
+                                    />
+                                    <div class="invalid-feedback">
+                                        Please provide a valid price.
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="total_price" class="form-label"
+                                        >Total Harga Jual</label
+                                    >
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        id="total_price"
+                                        name="total_price"
+                                        placeholder="Type here"
+                                        readonly
+                                        required
+                                        value="{{ form.total_price.value|default:'' }}"
+                                    />
+                                    <div class="invalid-feedback">
+                                        Please provide a valid total price.
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="total_price" class="form-label"
+                                        >Profit</label
+                                    >
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        id="profit"
+                                        name="profit"
+                                        placeholder="Type here"
+                                        required
+                                        value="{{ form.profit.value|default:'' }}"
+                                    />
+                                    <div class="invalid-feedback">
+                                        Please provide a valid profit.
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="information" class="form-label"
+                                        >Information</label
+                                    >
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        id="information"
+                                        placeholder="Type here"
+                                        name="information"
+                                        value="{{ form.information.value|default:'' }}"
+                                    />
+                                </div>
+
+                                <div style="float: right">
+                                    <button
+                                        type="submit"
+                                        class="btn btn-success"
+                                        style="
+                                            background-color: #3d4760;
+                                            color: #fff;
+                                            padding-left: 30px;
+                                            padding-right: 30px;
+                                        "
+                                    >
+                                        Save
+                                    </button>
+                                    <a
+                                        href="{% url 'sales_order_list' %}"
+                                        class="btn btn-secondary"
+                                        style="
+                                            border: 1px solid #3d4760;
+                                            color: #3d4760;
+                                            background: transparent;
+                                            padding-left: 30px;
+                                            padding-right: 30px;
+                                        "
+                                        >Back</a
+                                    >
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // Bootstrap validation for forms
+            (function () {
+                "use strict";
+                var forms = document.querySelectorAll(".needs-validation");
+                Array.prototype.slice.call(forms).forEach(function (form) {
+                    form.addEventListener(
+                        "submit",
+                        function (event) {
+                            if (!form.checkValidity()) {
+                                event.preventDefault();
+                                event.stopPropagation();
+                            }
+                            form.classList.add("was-validated");
+                        },
+                        false
+                    );
+                });
+            })();
+
+            // Calculate total price on quantity or price change
+            document
+                .getElementById("quantity")
+                .addEventListener("input", calculateTotal);
+            document
+                .getElementById("price")
+                .addEventListener("input", calculateTotal);
+            // Add event listeners for buy_price changes
+            document
+                .getElementById("buy_price")
+                .addEventListener("input", calculateProfit);
+            document
+                .getElementById("total_price")
+                .addEventListener("input", calculateProfit);
+
+            // Calculate profit based on buy_price and total_price
+            function calculateProfit() {
+                const quantity =
+                    parseFloat(document.getElementById("quantity").value) || 0;
+                const buyPrice =
+                    parseFloat(document.getElementById("buy_price").value) || 0;
+                const totalPrice =
+                    parseFloat(document.getElementById("total_price").value) ||
+                    0;
+
+                // Calculate total cost as quantity * buy_price
+                const totalCost = quantity * buyPrice;
+                // Calculate profit as totalPrice - totalCost
+                const profit = (totalPrice - totalCost).toFixed(2);
+
+                document.getElementById("profit").value = profit;
+            }
+
+            function calculateTotal() {
+                const quantity =
+                    parseFloat(document.getElementById("quantity").value) || 0;
+                const price =
+                    parseFloat(document.getElementById("price").value) || 0;
+                const totalPrice = (quantity * price).toFixed(2);
+                document.getElementById("total_price").value = totalPrice;
+                calculateProfit(); // Update profit after total price calculation
+            }
+        </script>
+    </body>
+</html>

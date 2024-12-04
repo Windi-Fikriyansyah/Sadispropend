@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Add Vendor</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+        />
+    </head>
+    <style>
+        body {
+          background: #ffffff
+          font-family: 'Poppins';
+        }
+
+        .card-custom {
+          padding: 3rem;
+          padding-top: 1.5rem;
+          padding-bottom: 1.5rem;
+          border-radius: 20px;
+        }
+
+        .navbar-brand text-white {
+          font-family: 'Poppins';
+          font-weight: 500;
+        }
+
+        .custom-user {
+          display: flex;
+          align-items: center;
+        }
+
+        .avatar {
+          width: 40px;
+          border-radius: 50%;
+        }
+
+        .logout {
+          border-radius: 20px;
+          padding-right: 20px;
+          padding-left: 20px;
+        }
+
+        .img-dashboard {
+          height: 400px;
+          object-fit: cover;
+          border-radius: 20px;
+        }
+
+        .btn-add {
+          background: #ffffff
+          text-align: center;
+          border: 1px solid #fff;
+          border-radius: 10px;
+          padding-right: 20px;
+          padding-left: 20px;
+        }
+
+        thead {
+          background: #D9D9D9;
+          text-align: center;
+        }
+
+        tbody {
+          background: #F5F5F5;
+          text-align: center;
+        }
+
+        .btn-edit {
+          border: 1px solid #ffc107;
+          background: transparent;
+          color: #ffc107;
+        }
+
+        .btn-delete {
+          border: 1px solid red;
+          color: red;
+          background: transparent;
+        }
+
+        .btn-detail {
+          border: 1px solid #198754;
+          color: #198754;
+          background: transparent;
+        }
+
+        .select {
+          background: #ffffff
+          color: white;
+          border-radius: 10px;
+          text-align: center;
+          width: 150px;
+        }
+
+        .search {
+          border-radius: 20px;
+          width: 200px;
+        }
+
+        label {
+          color: #8E8E93;
+        }
+
+        input {
+          color: #8E8E93;
+        }
+    </style>
+
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-light bg-primary">
+            <div class="container-fluid">
+                <div style="margin-right: 2%">
+                    <img
+                        src="/static/logo-dashboard.png"
+                        style="width: 150px"
+                    />
+                </div>
+                <a class="navbar-brand text-white" href="/purchase_orders"
+                    >PURCHASE ORDER</a
+                >
+                <a
+                    class="navbar-brand text-white"
+                    style="margin-left: 1%"
+                    href="/sales_orders"
+                    >SALES ORDER</a
+                >
+                <button
+                    class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav"
+                    aria-controls="navbarNav"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                >
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item custom-user">
+                            <img src="/static/default.jpg" class="avatar" />
+                            <a
+                                class="nav-link text-white"
+                                href="/users/"
+                                style="margin-right: 30px"
+                                >User</a
+                            >
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-danger text-white" href="/logout/"
+                                >Logout</a
+                            >
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container mt-5">
+            <div class="row" style="justify-content: center">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="mb-4 text-center">Add Vendor</h2>
+                            <form
+                                method="POST"
+                                action="{% url 'vendor_create' %}"
+                            >
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <label for="company_name" class="form-label"
+                                        >Nama Vendor</label
+                                    >
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        id="company_name"
+                                        name="company_name"
+                                        required
+                                    />
+                                </div>
+                                <div class="mb-3">
+                                    <label for="address" class="form-label"
+                                        >Address</label
+                                    >
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        id="address"
+                                        name="address"
+                                        required
+                                    />
+                                </div>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label"
+                                        >Email</label
+                                    >
+                                    <input
+                                        type="email"
+                                        class="form-control"
+                                        id="email"
+                                        name="email"
+                                        required
+                                    />
+                                </div>
+                                <div class="mb-3">
+                                    <label for="phone_number" class="form-label"
+                                        >Phone Number</label
+                                    >
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        id="phone_number"
+                                        name="phone_number"
+                                        required
+                                    />
+                                </div>
+                                <div class="mb-3">
+                                    <label
+                                        for="contract_period"
+                                        class="form-label"
+                                        >Expired Contract</label
+                                    >
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        id="contract_period"
+                                        name="contract_period"
+                                        required
+                                    />
+                                </div>
+                                <!-- <button type="submit" class="btn btn-primary">Submit</button> -->
+                                <div style="float: right">
+                                    <button
+                                        type="submit"
+                                        class="btn btn-success"
+                                        style="
+                                            background-color: #3d4760;
+                                            color: #fff;
+                                            padding-left: 30px;
+                                            padding-right: 30px;
+                                        "
+                                    >
+                                        Save
+                                    </button>
+                                    <a
+                                        href="{% url 'vendor_list' %}"
+                                        class="btn btn-secondary"
+                                        style="
+                                            border: 1px solid #3d4760;
+                                            color: #3d4760;
+                                            background: transparent;
+                                            padding-left: 30px;
+                                            padding-right: 30px;
+                                        "
+                                        >Back</a
+                                    >
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>SADIS</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+        />
+    </head>
+
+    <style>
+        body {
+            background: #ffffff;
+        }
+
+        .card-custom {
+            padding: 3rem;
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-radius: 20px;
+        }
+
+        .navbar-brand text-white {
+            font-family: "Poppins";
+            font-weight: 500;
+        }
+
+        .custom-user {
+            display: flex;
+            align-items: center;
+        }
+
+        .avatar {
+            width: 40px;
+            border-radius: 50%;
+        }
+
+        .logout {
+            border-radius: 20px;
+            padding-right: 20px;
+            padding-left: 20px;
+        }
+
+        .img-dashboard {
+            height: 400px;
+            object-fit: cover;
+            border-radius: 20px;
+        }
+    </style>
+
+    <body>
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-primary">
+            <div class="container-fluid">
+                <div style="margin-right: 2%">
+                    <a href="/success">
+                        <img
+                            src="/static/logo-dashboard.png"
+                            style="width: 150px"
+                        />
+                    </a>
+                </div>
+                <a class="navbar-brand text-white" href="/purchase_orders"
+                    >PURCHASE ORDER</a
+                >
+                <a
+                    class="navbar-brand text-white"
+                    style="margin-left: 1%"
+                    href="/sales_orders"
+                    >SALES ORDER</a
+                >
+                <button
+                    class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav"
+                    aria-controls="navbarNav"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                >
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item custom-user">
+                            <img src="/static/default.jpg" class="avatar" />
+                            <a
+                                class="nav-link text-white"
+                                href="/users/"
+                                style="margin-right: 30px"
+                                >User</a
+                            >
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-danger text-white" href="/logout/"
+                                >Logout</a
+                            >
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div style="padding: 20px">
+            <a href="/accounting">
+                <img style="width: 50px" src="/static/left-arrow.png" />
+            </a>
+        </div>
+
+        <!-- Main Content -->
+        <div class="container mt-5">
+            <div class="row mb-5">
+                <div class="col-md-12">
+                    <img
+                        src="/static/dashboard.jpg"
+                        class="w-100 img-dashboard"
+                    />
+                </div>
+            </div>
+
+            <!-- <h2 class="mb-4">Management</h2> -->
+            <div class="row" style="justify-content: space-around">
+                <!-- User Management Card -->
+                <div class="col-md-3 mb-4">
+                    <a
+                        style="color: #000; text-decoration: none"
+                        href="{% url 'customer_list' %}"
+                    >
+                        <div class="card text-center card-custom">
+                            <div class="card-body">
+                                <h5 class="card-title">Customer</h5>
+                                <!-- <p class="card-text">Manage users in the system.</p> -->
+                                <!-- <a href="{% url 'user_list' %}" class="btn btn-primary">Go to User List</a> -->
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Accounting Card -->
+                <div class="col-md-3 mb-4">
+                    <a
+                        style="color: #000; text-decoration: none"
+                        href="{% url 'vendor_list' %}"
+                    >
+                        <div class="card text-center card-custom">
+                            <div class="card-body">
+                                <h5 class="card-title">Vendor</h5>
+                                <!-- <p class="card-text">Manage accounting tasks and reports.</p>
+            <a href="{% url 'accounting' %}" class="btn btn-secondary">Go to Accounting</a> -->
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>
