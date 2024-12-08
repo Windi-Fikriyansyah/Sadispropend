@@ -112,15 +112,7 @@
                         style="width: 150px"
                     />
                 </div>
-                <a class="navbar-brand text-white" href="/purchase_orders"
-                    >PURCHASE ORDER</a
-                >
-                <a
-                    class="navbar-brand text-white"
-                    style="margin-left: 1%"
-                    href="/sales_orders"
-                    >SALES ORDER</a
-                >
+                <a class="navbar-brand text-white" href="#">HOME PAGE</a>
                 <button
                     class="navbar-toggler"
                     type="button"
@@ -134,6 +126,53 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/success/">dashboard</a>
+                        </li>
+                        <!-- New Menu Item 2 -->
+                        {% if request.session.user_role == 'sales' or request.session.user_role == 'admin' %}
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/customers/">customer</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/vendor/">vendor</a>
+                        </li>
+                        {% endif %}
+
+                        <!-- Accounting role -->
+                        {% if request.session.user_role == 'accounting' or request.session.user_role == 'admin' %}
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/ledger/">ledger</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/purchase_orders/">PO</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/sales_orders/">SO</a>
+                        </li>
+                        {% endif %}
+
+                        <!-- Manager role -->
+                        {% if request.session.user_role == 'manajer' %}
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/customers/">customer</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/vendor/">vendor</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/purchase_orders/">PO</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/sales_orders/">SO</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/ledger/">ledger</a>
+                        </li>
+                        {% endif %}
+
+                        {% if request.session.user_role == 'admin' %}
                         <li class="nav-item custom-user">
                             <img src="/static/default.jpg" class="avatar" />
                             <a
@@ -143,6 +182,8 @@
                                 >User</a
                             >
                         </li>
+                        {% endif %}
+
                         <li class="nav-item">
                             <a
                                 class="nav-link btn btn-danger text-white"
@@ -150,6 +191,7 @@
                                 >Logout</a
                             >
                         </li>
+
                     </ul>
                 </div>
             </div>
@@ -210,13 +252,21 @@
                             </center>
                         </div>
                     </div>
+                    <div class="col mt-5 mb-5">
+                        <!-- Display messages -->
+                        {% if messages %}
+                            <div class="alert alert-success">
+                                {% for message in messages %} {{ message }} {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
                     <table class="table table-bordered table-striped">
                         <thead>
                             <tr class="bg-primary text-white">
                                 <!-- <th>ID</th> -->
                                 <th>TANGGAL TRANSAKSI</th>
                                 <th>NOMOR PO/SO</th>
-                                <th>NAMA</th>
+                                <th>Nama Vendor/Customer</th>
                                 <th>INCOME</th>
                                 <th>OUTCOME</th>
                                 <th>SISA</th>
@@ -231,9 +281,9 @@
                                 <td>{{ order.order_date }}</td>
                                 <td>{{ order.nomor_so }}</td>
                                 <td>{{ order.customer_name }}</td>
-                                <td>Rp {{ order.income }}</td>
-                                <td>Rp {{ order.outcome }}</td>
-                                <td>Rp {{ order.sisa }}</td>
+                                <td>Rp {{ order.income|default:"-" }}</td>
+                                <td>Rp {{ order.outcome|default:"-" }}</td>
+                                <td>Rp {{ order.hutang_piutang }}</td>
                                 <td>Rp {{ order.totaltransaksi }}</td>
                                 <td>
                                     <a
@@ -267,14 +317,7 @@
                     </table>
                 </div>
             </div>
-            <div class="col mt-5 mb-5">
-                <!-- Display messages -->
-                {% if messages %}
-                    <div class="alert alert-success">
-                        {% for message in messages %} {{ message }} {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
+
         </div>
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>

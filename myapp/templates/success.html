@@ -3,52 +3,66 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>SADIS</title>
+        <title>SADIS Dashboard</title>
         <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
             rel="stylesheet"
         />
+        <style>
+            body {
+                background: #f4f6f9;
+            }
+
+            .card-custom {
+                padding: 3rem;
+                padding-top: 1.5rem;
+                padding-bottom: 1.5rem;
+                border-radius: 20px;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            }
+
+            .chart-card {
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .chart-card .card-body {
+                flex-grow: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+
+            .chart-container {
+                position: relative;
+                height: 350px;
+                width: 100%;
+            }
+
+            .navbar-brand {
+                font-family: "Poppins", sans-serif;
+                font-weight: 500;
+            }
+
+            .custom-user {
+                display: flex;
+                align-items: center;
+            }
+
+            .avatar {
+                width: 40px;
+                border-radius: 50%;
+                margin-right: 10px;
+            }
+
+            .logout {
+                border-radius: 20px;
+                padding-right: 20px;
+                padding-left: 20px;
+            }
+        </style>
     </head>
-
-    <style>
-        body {
-            background: #ffffff;
-        }
-
-        .card-custom {
-            padding: 3rem;
-            padding-top: 1.5rem;
-            padding-bottom: 1.5rem;
-            border-radius: 20px;
-        }
-
-        .navbar-brand text-white {
-            font-family: "Poppins";
-            font-weight: 500;
-        }
-
-        .custom-user {
-            display: flex;
-            align-items: center;
-        }
-
-        .avatar {
-            width: 40px;
-            border-radius: 50%;
-        }
-
-        .logout {
-            border-radius: 20px;
-            padding-right: 20px;
-            padding-left: 20px;
-        }
-
-        .img-dashboard {
-            height: 400px;
-            object-fit: cover;
-            border-radius: 20px;
-        }
-    </style>
 
     <body>
         <!-- Navbar -->
@@ -74,6 +88,52 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/success/">dashboard</a>
+                        </li>
+                        <!-- New Menu Item 2 -->
+                        {% if request.session.user_role == 'sales' or request.session.user_role == 'admin' %}
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/customers/">customer</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/vendor/">vendor</a>
+                        </li>
+                        {% endif %}
+
+                        <!-- Accounting role -->
+                        {% if request.session.user_role == 'accounting' or request.session.user_role == 'admin' %}
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/ledger/">ledger</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/purchase_orders/">PO</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/sales_orders/">SO</a>
+                        </li>
+                        {% endif %}
+
+                        <!-- Manager role -->
+                        {% if request.session.user_role == 'manajer' %}
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/customers/">customer</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/vendor/">vendor</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/purchase_orders/">PO</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/sales_orders/">SO</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/ledger/">ledger</a>
+                        </li>
+                        {% endif %}
+
                         {% if request.session.user_role == 'admin' %}
                         <li class="nav-item custom-user">
                             <img src="/static/default.jpg" class="avatar" />
@@ -85,6 +145,7 @@
                             >
                         </li>
                         {% endif %}
+
                         <li class="nav-item">
                             <a
                                 class="nav-link btn btn-danger text-white"
@@ -92,6 +153,7 @@
                                 >Logout</a
                             >
                         </li>
+
                     </ul>
                 </div>
             </div>
@@ -100,57 +162,56 @@
         <!-- Main Content -->
         <div class="container mt-5">
             <div class="row mb-5">
-                <div class="col-5">
-                    <div class="card">
+                <!-- Income/Outcome Chart -->
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 chart-card">
                         <div class="card-header text-center">INCOME / OUTCOME</div>
                         <div class="card-body">
                             <!-- Year Selection Dropdown -->
-                            <div class="form-group">
+                            <div class="form-group mb-3">
                                 <label for="yearSelect">Select Year:</label>
                                 <select id="yearSelect" class="form-control" onchange="updateChartData()">
                                     <option value="">Select Year</option>
-                                    <!-- Add years dynamically if needed -->
                                     <option value="2024">2024</option>
                                     <option value="2023">2023</option>
                                     <option value="2022">2022</option>
-                                    <!-- Add more years as required -->
                                 </select>
                             </div>
-                            <div>
+                            <div class="chart-container">
                                 <canvas id="myChart"></canvas>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-7">
-                    <div class="card">
-                        <div class="card-header text-center">PROFIT </div>
+
+                <!-- Profit by Customer Chart -->
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 chart-card">
+                        <div class="card-header text-center">PROFIT</div>
                         <div class="card-body">
-                            <div>
+                            <div class="chart-container">
                                 <canvas id="myChart2"></canvas>
                             </div>
                         </div>
                     </div>
                 </div>
-
             </div>
 
+            <!-- Profit per Year Chart -->
             <div class="row mb-5">
-
-                <div class="col-7">
-                    <div class="card">
-                        <div class="card-header text-center">PROFIT </div>
+                <div class="col-md-12">
+                    <div class="card chart-card">
+                        <div class="card-header text-center">TOTAL PROFIT PER YEAR</div>
                         <div class="card-body">
-                            <div>
+                            <div class="chart-container">
                                 <canvas id="myChart3"></canvas>
                             </div>
                         </div>
                     </div>
                 </div>
-
             </div>
 
-            <!-- <h2 class="mb-4">Management</h2> -->
+            <!-- Management Cards -->
             <div class="row" style="justify-content: space-around">
                 <!-- User Management Card -->
                 <div class="col-md-3 mb-4">
@@ -161,8 +222,6 @@
                         <div class="card text-center card-custom">
                             <div class="card-body">
                                 <h5 class="card-title">User Management</h5>
-                                <!-- <p class="card-text">Manage users in the system.</p> -->
-                                <!-- <a href="{% url 'user_list' %}" class="btn btn-primary">Go to User List</a> -->
                             </div>
                         </div>
                     </a>
@@ -178,8 +237,6 @@
                         <div class="card text-center card-custom">
                             <div class="card-body">
                                 <h5 class="card-title">Accounting</h5>
-                                <!-- <p class="card-text">Manage accounting tasks and reports.</p>
-            <a href="{% url 'accounting' %}" class="btn btn-secondary">Go to Accounting</a> -->
                             </div>
                         </div>
                     </a>
@@ -187,79 +244,99 @@
                 </div>
             </div>
         </div>
+
+        <!-- Scripts remain the same as in the original file -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
         <script>
-            let myChart; // Declare a global variable for the chart instance
+           let myChart; // Declare a global variable for the chart instance
 
-            // Function to fetch chart data with year filter
-            async function fetchChartData(year) {
-                try {
-                    const response = await fetch(`{% url 'get_incomeoutcome_chart' %}?year=${year}`);
-                    const data = await response.json();
-                    return data;
-                } catch (error) {
-                    console.error("Error fetching chart data:", error);
-                    return { income: 0, outcome: 0 }; // Default if there is an error
-                }
-            }
+           // Function to fetch chart data with year filter
+           async function fetchChartData(year) {
+               try {
+                   const response = await fetch(`{% url 'get_incomeoutcome_chart' %}?year=${year}`);
+                   const data = await response.json();
+                   return data;
+               } catch (error) {
+                   console.error("Error fetching chart data:", error);
+                   return { income: 0, outcome: 0 }; // Default if there is an error
+               }
+           }
 
-            // Function to create or update the pie chart
-            async function createPieChart(year) {
-                const chartData = await fetchChartData(year);
-                const ctx = document.getElementById('myChart').getContext('2d');
+           // Function to create or update the bar chart
+           async function createBarChart1(year) {
+               const chartData = await fetchChartData(year);
+               const ctx = document.getElementById('myChart').getContext('2d');
 
-                // If a chart already exists, destroy it before creating a new one
-                if (myChart) {
-                    myChart.destroy();
-                }
+               // If a chart already exists, destroy it before creating a new one
+               if (myChart) {
+                   myChart.destroy();
+               }
 
-                // Create a new chart
-                myChart = new Chart(ctx, {
-                    type: 'pie',
-                    data: {
-                        labels: ['Income', 'Outcome'],
-                        datasets: [{
-                            data: [chartData.income, chartData.outcome],
-                            backgroundColor: ['#4CAF50', '#FF5722'],
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: {
-                                position: 'top',
-                            },
-                        }
-                    }
-                });
-            }
+               // Create a new chart
+               myChart = new Chart(ctx, {
+                   type: 'bar',
+                   data: {
+                       labels: ['Income', 'Outcome'],
+                       datasets: [{
+                           label: 'Amount',
+                           data: [chartData.income, chartData.outcome],
+                           backgroundColor: ['#4CAF50', '#FF5722'],
+                           borderColor: ['#388E3C', '#F4511E'],
+                           borderWidth: 1
+                       }]
+                   },
+                   options: {
+                       responsive: true,
+                       maintainAspectRatio: false,
+                       scales: {
+                           y: {
+                               beginAtZero: true,
+                               title: {
+                                   display: true,
+                                   text: 'Amount'
+                               }
+                           }
+                       },
+                       plugins: {
+                           legend: {
+                               position: 'top',
+                           },
+                           title: {
+                               display: true,
+                               text: 'Income vs Outcome'
+                           }
+                       }
+                   }
+               });
+           }
 
-            // Function to update the chart based on the selected year
-            function updateChartData() {
-                const year = document.getElementById('yearSelect').value;
-                if (year) {
-                    createPieChart(year);
-                } else {
-                    alert("Please select a year.");
-                }
-            }
+           // Function to update the chart based on the selected year
+           function updateChartData() {
+               const year = document.getElementById('yearSelect').value;
+               if (year) {
+                   createBarChart1(year);
+               } else {
+                   alert("Please select a year.");
+               }
+           }
 
-            // Initial call to create the chart without any year selected
-            createPieChart('');
+           // Initial call to create the chart without any year selected
+           createBarChart1('');
         </script>
-         <script>
-            // Ambil data JSON dari server
+
+        <script>
+            // Fetch data JSON from server
             fetch("{% url 'get_profit_chart' %}")
                 .then(response => response.json())
                 .then(data => {
-                    // Ambil data customer_names dan profits
+                    // Get customer_names and profits data
                     var customer_names = data.customer_names;
                     var profits = data.profits;
 
-                    // Buat chart menggunakan Chart.js
+                    // Create chart using Chart.js
                     var ctx = document.getElementById('myChart2').getContext('2d');
                     var myChart = new Chart(ctx, {
                         type: 'bar',
@@ -274,6 +351,8 @@
                             }]
                         },
                         options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
                             scales: {
                                 y: {
                                     beginAtZero: true
@@ -284,6 +363,7 @@
                 })
                 .catch(error => console.error('Error:', error));
         </script>
+
         <script>
             let myChart3; // Declare a global variable for the profit chart
 
@@ -324,6 +404,7 @@
                     },
                     options: {
                         responsive: true,
+                        maintainAspectRatio: false,
                         scales: {
                             y: {
                                 beginAtZero: true
@@ -341,6 +422,5 @@
             // Initial call to create the bar chart
             createBarChart();
         </script>
-
     </body>
 </html>

@@ -27,6 +27,22 @@ class PurchaseOrderForm(forms.ModelForm):
         fields = ['order_date', 'vendor_name', 'product', 'quantity', 'price', 'total_price', 'nomor_po']  # Specify the fields for the sales order
 
 class LedgerForm(forms.ModelForm):
+
     class Meta:
         model = TblLedger
-        fields = ['order_date', 'customer_name', 'income', 'outcome', 'sisa', 'nomor_so', 'totaltransaksi']  # Specify the fields for the sales order
+        fields = ['order_date', 'customer_name', 'income', 'outcome', 'hutang_piutang', 'nomor_so', 'totaltransaksi']
+         # Specify the fields for the sales orderdef __init__(self, *args, **kwargs):
+    def clean_income(self):
+        income = self.cleaned_data.get('income')
+        if income == '':
+            return None  # This will store NULL in the database
+        return income
+    def __init__(self, *args, **kwargs):
+        # Get the custom arguments (po_list and so_list) from kwargs
+        po_list = kwargs.pop('po_list', None)
+        so_list = kwargs.pop('so_list', None)
+        super().__init__(*args, **kwargs)
+
+        # Now you can use po_list and so_list in the form if needed
+        self.po_list = po_list
+        self.so_list = so_list

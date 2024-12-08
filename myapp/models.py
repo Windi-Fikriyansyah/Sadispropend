@@ -87,9 +87,9 @@ class TblLedger(models.Model):
     id = models.AutoField(primary_key=True)
     order_date = models.DateField(max_length=255, null=True, blank=True)
     customer_name = models.CharField(max_length=255, null=True, blank=True)
-    outcome = models.IntegerField(null=True, blank=True)
+    outcome = models.CharField(max_length=255, null=True, blank=True)
     income = models.CharField(max_length=255, null=True, blank=True)
-    sisa = models.CharField(max_length=255, null=True, blank=True)
+    hutang_piutang = models.CharField(max_length=255, null=True, blank=True)
     nomor_so = models.CharField(max_length=255, null=True, blank=True)
     totaltransaksi = models.CharField(max_length=255, null=True, blank=True)
 

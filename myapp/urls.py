@@ -40,6 +40,7 @@ urlpatterns = [
     path('purchase_orders/<int:id>/update/', views.purchase_order_update, name='purchase_order_update'),  # Update sales order
     path('purchase_orders/<int:id>/delete/', views.purchase_order_delete, name='purchase_order_delete'),  # Delete sales order
     path('ledger/', views.ledger_list, name='ledger_list'),  # List all sales orders
+     path('fetch-details/', views.fetch_details, name='fetch_details'),
     path('ledger/create/', views.ledger_create, name='ledger_create'),  # Create a new sales order
     path('ledger/<int:id>/detail/', views.ledger_detail, name='ledger_detail'),  # Update sales order
     path('ledger/<int:id>/update/', views.ledger_update, name='ledger_update'),  # Update sales order

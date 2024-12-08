@@ -54,13 +54,13 @@
         <!-- Navbar -->
         <nav class="navbar navbar-expand-lg navbar-light bg-primary">
             <div class="container-fluid">
-                <a href="/success">
+                <div style="margin-right: 2%">
                     <img
                         src="/static/logo-dashboard.png"
                         style="width: 150px"
                     />
-                </a>
-                <a class="navbar-brand text-white" href="#">ACCOUNTING</a>
+                </div>
+                <a class="navbar-brand text-white" href="#">HOME PAGE</a>
                 <button
                     class="navbar-toggler"
                     type="button"
@@ -74,6 +74,53 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/success/">dashboard</a>
+                        </li>
+                        <!-- New Menu Item 2 -->
+                        {% if request.session.user_role == 'sales' or request.session.user_role == 'admin' %}
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/customers/">customer</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/vendor/">vendor</a>
+                        </li>
+                        {% endif %}
+
+                        <!-- Accounting role -->
+                        {% if request.session.user_role == 'accounting' or request.session.user_role == 'admin' %}
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/ledger/">ledger</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/purchase_orders/">PO</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/sales_orders/">SO</a>
+                        </li>
+                        {% endif %}
+
+                        <!-- Manager role -->
+                        {% if request.session.user_role == 'manajer' %}
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/customers/">customer</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/vendor/">vendor</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/purchase_orders/">PO</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/sales_orders/">SO</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/ledger/">ledger</a>
+                        </li>
+                        {% endif %}
+
+                        {% if request.session.user_role == 'admin' %}
                         <li class="nav-item custom-user">
                             <img src="/static/default.jpg" class="avatar" />
                             <a
@@ -83,11 +130,16 @@
                                 >User</a
                             >
                         </li>
+                        {% endif %}
+
                         <li class="nav-item">
-                            <a class="nav-link btn btn-danger text-white" href="/logout/"
+                            <a
+                                class="nav-link btn btn-danger text-white"
+                                href="/logout/"
                                 >Logout</a
                             >
                         </li>
+
                     </ul>
                 </div>
             </div>

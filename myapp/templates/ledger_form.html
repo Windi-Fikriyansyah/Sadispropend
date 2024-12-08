@@ -5,10 +5,13 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Ledger Form</title>
         <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
-            rel="stylesheet"
-        />
-    </head>
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    />
+
+    <!-- Add jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 
     <style>
         body {
@@ -108,6 +111,8 @@
             color: #8E8E93;
         }
     </style>
+    </head>
+
 
     <body>
         <!-- Navbar -->
@@ -119,15 +124,7 @@
                         style="width: 150px"
                     />
                 </div>
-                <a class="navbar-brand text-white" href="/purchase_orders"
-                    >PURCHASE ORDER</a
-                >
-                <a
-                    class="navbar-brand text-white"
-                    style="margin-left: 1%"
-                    href="/sales_orders"
-                    >SALES ORDER</a
-                >
+                <a class="navbar-brand text-white" href="#">HOME PAGE</a>
                 <button
                     class="navbar-toggler"
                     type="button"
@@ -141,6 +138,53 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/success/">dashboard</a>
+                        </li>
+                        <!-- New Menu Item 2 -->
+                        {% if request.session.user_role == 'sales' or request.session.user_role == 'admin' %}
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/customers/">customer</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/vendor/">vendor</a>
+                        </li>
+                        {% endif %}
+
+                        <!-- Accounting role -->
+                        {% if request.session.user_role == 'accounting' or request.session.user_role == 'admin' %}
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/ledger/">ledger</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/purchase_orders/">PO</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/sales_orders/">SO</a>
+                        </li>
+                        {% endif %}
+
+                        <!-- Manager role -->
+                        {% if request.session.user_role == 'manajer' %}
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/customers/">customer</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/vendor/">vendor</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/purchase_orders/">PO</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/sales_orders/">SO</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/ledger/">ledger</a>
+                        </li>
+                        {% endif %}
+
+                        {% if request.session.user_role == 'admin' %}
                         <li class="nav-item custom-user">
                             <img src="/static/default.jpg" class="avatar" />
                             <a
@@ -150,22 +194,26 @@
                                 >User</a
                             >
                         </li>
+                        {% endif %}
+
                         <li class="nav-item">
-                            <a class="nav-link btn btn-danger text-white" href="/logout/"
+                            <a
+                                class="nav-link btn btn-danger text-white"
+                                href="/logout/"
                                 >Logout</a
                             >
                         </li>
+
                     </ul>
                 </div>
             </div>
         </nav>
-
         <div class="container mt-5">
             <div class="row" style="justify-content: center">
                 <div class="col-md-8">
                     <div class="card">
                         <div class="card-body">
-                            <h2 class="mb-4 text-center">ADD LEDGER</h2>
+                            <h2 class="mb-4 text-center">{{title}}</h2>
                             <form
                                 method="POST"
                                 class="needs-validation"
@@ -183,7 +231,8 @@
                                         id="order_date"
                                         name="order_date"
                                         required
-                                        value="{{ form.order_date.value|default:''|date:'Y-m-d' }}"
+                                        disabled
+                                        value="{{ today|date:'Y-m-d' }}"
                                     />
                                     <div class="invalid-feedback">
                                         Please provide a valid order date.
@@ -191,92 +240,49 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="order_date" class="form-label"
-                                        >Nomor PO/SO</label
-                                    >
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        id="nomor_so"
-                                        name="nomor_so"
-                                        placeholder="Type here"
-                                        required
-                                        value="{{ form.nomor_so.value|default:'' }}"
-                                    />
-                                    <div class="invalid-feedback">
-                                        Please provide a valid nomor so.
-                                    </div>
+                                    <label for="nomor_po_so" class="form-label">Nomor PO/SO</label>
+                                    <select class="form-select" id="nomor_so" name="nomor_so" required>
+                                        <option value="" selected disabled>Select PO/SO</option>
+                                        {% for po in po_list %}
+                                        <option value="{{ po.nomor_po }}" {% if po.nomor_po == initial_nomor %}selected{% endif %}>
+                                            {{ po.nomor_po }}
+                                        </option>
+                                        {% endfor %}
+                                        {% for so in so_list %}
+                                        <option value="{{ so.nomor_so }}" {% if so.nomor_so == initial_nomor %}selected{% endif %}>
+                                            {{ so.nomor_so }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="invalid-feedback">Please select a valid PO/SO.</div>
                                 </div>
 
                                 <div class="mb-3">
-                                    <label
-                                        for="customer_name"
-                                        class="form-label"
-                                        >Nama</label
-                                    >
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        id="customer_name"
-                                        name="customer_name"
-                                        placeholder="Type here"
-                                        required
-                                        value="{{ form.customer_name.value|default:'' }}"
-                                    />
-                                    <div class="invalid-feedback">
-                                        Please provide a valid customer name.
-                                    </div>
+                                    <label for="customer_name" class="form-label">Nama</label>
+                                    <input type="text" class="form-control" id="customer_name" name="customer_name" value="{{ form.customer_name.value|default:'' }}" readonly>
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="income" class="form-label"
-                                        >Income</label
-                                    >
-                                    <input
-                                        type="number"
-                                        step="0.01"
-                                        class="form-control"
-                                        id="income"
-                                        name="income"
-                                        placeholder="Type here"
-                                        required
-                                        value="{{ form.income.value|default:'' }}"
-                                    />
-                                    <div class="invalid-feedback">
-                                        Please provide a valid income.
-                                    </div>
+                                    <label for="income" class="form-label">Income</label>
+                                    <input type="number" step="0.01" class="form-control" id="income" name="income" value="{{ form.income.value|default:'' }}">
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="outcome" class="form-label"
-                                        >Outcome</label
-                                    >
-                                    <input
-                                        type="number"
-                                        step="0.01"
-                                        class="form-control"
-                                        id="outcome"
-                                        name="outcome"
-                                        placeholder="Type here"
-                                        required
-                                        value="{{ form.outcome.value|default:'' }}"
-                                    />
-                                    <div class="invalid-feedback">
-                                        Please provide a valid outcome.
-                                    </div>
+                                    <label for="outcome" class="form-label">Outcome</label>
+                                    <input type="number" step="0.01" class="form-control" id="outcome" name="outcome" value="{{ form.outcome.value|default:'' }}">
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="sisa" class="form-label"
-                                        >Sisa</label
+                                        >Hutang Piutang</label
                                     >
                                     <input
                                         type="text"
                                         class="form-control"
                                         id="sisa"
                                         placeholder="Type here"
-                                        name="sisa"
-                                        value="{{ form.sisa.value|default:'' }}"
+                                        name="hutang_piutang"
+                                        value="{{ form.hutang_piutang.value|default:'' }}"
                                     />
                                 </div>
 
@@ -326,6 +332,7 @@
                 </div>
             </div>
         </div>
+
 
         <script>
             // Bootstrap validation for forms
@@ -389,6 +396,52 @@
                 document.getElementById("total_price").value = totalPrice;
                 calculateProfit(); // Update profit after total price calculation
             }
-        </script>
+</script>
+<script>
+   $(document).ready(function() {
+    // When the PO/SO is changed
+    $("#nomor_so").change(function() {
+        const nomor = $(this).val(); // Get the selected PO/SO number
+
+        if (nomor) {
+            $.ajax({
+                url: "{% url 'fetch_details' %}", // Django view to fetch details
+                data: { nomor: nomor, csrfmiddlewaretoken: '{{ csrf_token }}' },
+                success: function(data) {
+                    // Check if data is received from the backend
+                    if (data.nama) {
+                        // Update the customer name field
+                        $("#customer_name").val(data.nama).prop('disabled', false);
+
+                        // Enable/disable fields based on type (PO or SO)
+                        if (data.type === 'PO') {
+                            $("#income").prop('disabled', true); // Disable income
+                            $("#outcome").prop('disabled', false); // Enable outcome
+                        } else if (data.type === 'SO') {
+                            $("#income").prop('disabled', false); // Enable income
+                            $("#outcome").prop('disabled', true); // Disable outcome
+                        }
+                    } else {
+                        // Clear and disable all fields if no data
+                        $("#customer_name").val("").prop('disabled', true);
+                        $("#income, #outcome").prop('disabled', true);
+                    }
+                },
+                error: function() {
+                    alert("Error fetching details. Please try again.");
+                }
+            });
+        } else {
+            // Clear the fields if no PO/SO is selected
+            $("#customer_name").val("").prop('disabled', true);
+            $("#income, #outcome").prop('disabled', true);
+        }
+    });
+});
+</script>
+
+
     </body>
 </html>
+
+

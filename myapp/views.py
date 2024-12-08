@@ -9,6 +9,9 @@ from django.http import JsonResponse
 from django.db.models import Sum
 from django.http import HttpResponseForbidden
 from django.db.models.functions import TruncYear
+from django.utils import timezone
+from pytz import timezone as pytz_timezone
+from .models import TblPurchaseOrder, TblSalesOrder
 
 # Logout function
 def logout_view(request):
@@ -243,6 +246,9 @@ def sales_order_create(request):
 
             # Add the generated SO number to the form data
             form.instance.nomor_so = new_so_number
+            jakarta_tz = pytz_timezone('Asia/Jakarta')
+            if not form.instance.order_date:
+                form.instance.order_date = timezone.now().astimezone(jakarta_tz).date()
 
             form.save()
             messages.success(request, 'Sales Order berhasil ditambahkan')
@@ -256,8 +262,14 @@ def sales_order_create(request):
         else:
             new_so_number = "SO-1"  # First Sales Order number
         form.fields['nomor_so'].initial = new_so_number  # Set initial value for the field
-
-    return render(request, 'sales_order_form.html', {'form': form})
+        jakarta_tz = pytz_timezone('Asia/Jakarta')
+        form.fields['order_date'].initial = timezone.now().astimezone(jakarta_tz).date()
+        context = {
+            'form': form,
+            'title': 'Add Sales Order',
+            'today': timezone.now().astimezone(jakarta_tz).date(),
+        }
+    return render(request, 'sales_order_form.html', context)
 
 # Update - Edit an existing sales order
 def sales_order_update(request, id):
@@ -265,12 +277,23 @@ def sales_order_update(request, id):
     if request.method == 'POST':
         form = SalesOrderForm(request.POST, instance=sales_order)
         if form.is_valid():
+
+            jakarta_tz = pytz_timezone('Asia/Jakarta')
+            if not form.instance.order_date:
+                form.instance.order_date = timezone.now().astimezone(jakarta_tz).date()
+
             form.save()
             messages.success(request, 'Sales Order berhasil diubah')
             return redirect('sales_order_list')
     else:
         form = SalesOrderForm(instance=sales_order)
-    return render(request, 'sales_order_form.html', {'form': form})
+
+    jakarta_tz = pytz_timezone('Asia/Jakarta')
+    return render(request, 'sales_order_form.html',{
+        'form': form,
+        'title': 'Update Sales Order',
+        'today': timezone.now().astimezone(jakarta_tz).date(),   # Add the 'today' variable
+    })
 
 def sales_order_detail(request, id):
     sales_order = get_object_or_404(TblSalesOrder, id=id)
@@ -327,6 +350,9 @@ def purchase_order_create(request):
 
             # Add the generated PO number to the form data
             form.instance.nomor_po = new_po_number
+            jakarta_tz = pytz_timezone('Asia/Jakarta')
+            if not form.instance.order_date:
+                form.instance.order_date = timezone.now().astimezone(jakarta_tz).date()
 
             form.save()
             messages.success(request, 'Purchase Order berhasil ditambahkan')
@@ -340,21 +366,43 @@ def purchase_order_create(request):
         else:
             new_po_number = "PO-1"  # First PO number
         form.fields['nomor_po'].initial = new_po_number  # Set initial value for the field
+        jakarta_tz = pytz_timezone('Asia/Jakarta')
+        form.fields['order_date'].initial = timezone.now().astimezone(jakarta_tz).date()
 
-    return render(request, 'purchase_order_form.html', {'form': form})
+        context = {
+            'form': form,
+            'title': 'Add Purchase Order',
+            'today': timezone.now().astimezone(jakarta_tz).date(),
+        }
+        return render(request, 'purchase_order_form.html', context)
 
 # Update - Edit an existing sales order
 def purchase_order_update(request, id):
     purchase_order = get_object_or_404(TblPurchaseOrder, id=id)
+
     if request.method == 'POST':
         form = PurchaseOrderForm(request.POST, instance=purchase_order)
         if form.is_valid():
+            # Ensure 'order_date' is set to today's date if it is missing
+            jakarta_tz = pytz_timezone('Asia/Jakarta')
+            if not form.instance.order_date:
+                form.instance.order_date = timezone.now().astimezone(jakarta_tz).date()
+
+
             form.save()
-            messages.success(request, 'Purchasae Order berhasil diubah')
+            messages.success(request, 'Purchase Order berhasil diubah')
             return redirect('purchase_order_list')
     else:
         form = PurchaseOrderForm(instance=purchase_order)
-    return render(request, 'purchase_order_form.html', {'form': form})
+
+    # Pass 'today' to the template
+    jakarta_tz = pytz_timezone('Asia/Jakarta')
+    return render(request, 'purchase_order_form.html', {
+        'form': form,
+        'title': 'Update Purchase Order',
+        'today': timezone.now().astimezone(jakarta_tz).date(),  # Add the 'today' variable
+    })
+
 
 def purchase_order_detail(request, id):
     purchase_order = get_object_or_404(TblPurchaseOrder, id=id)
@@ -395,28 +443,117 @@ def ledger_list(request):
 
 # Create - Add a new sales order
 def ledger_create(request):
-    if request.method == 'POST':
-        form = LedgerForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Ledger berhasil ditambahkan')
-            return redirect('ledger_list')
-    else:
-        form = LedgerForm()
-    return render(request, 'ledger_form.html', {'form': form})
+    if request.method == "POST":
+        # Extract the form data from POST request
+        order_date = request.POST.get('order_date')
+        nomor_so = request.POST.get('nomor_so')
+        customer_name = request.POST.get('customer_name')
 
-# Update - Edit an existing sales order
+        try:
+            income = int(request.POST.get('income', 0))  # Default to 0 if empty
+        except ValueError:
+            income = 0  # If the conversion fails, set it to 0
+
+        try:
+            outcome = int(request.POST.get('outcome', 0))  # Default to 0 if empty
+        except ValueError:
+            outcome = 0
+
+        try:
+            hutang_piutang = int(request.POST.get('hutang_piutang', 0))  # Default to 0 if empty
+        except ValueError:
+            hutang_piutang = 0
+
+        try:
+            totaltransaksi = int(request.POST.get('totaltransaksi', 0))  # Default to 0 if empty
+        except ValueError:
+            totaltransaksi = 0
+
+        # Save the data to the Ledger model
+        if not order_date:
+            # Get the current time in Indonesia timezone (Asia/Jakarta)
+            jakarta_tz = pytz_timezone('Asia/Jakarta')
+            order_date = timezone.now().astimezone(jakarta_tz).date()
+
+        new_ledger = TblLedger(
+            order_date=order_date,
+            nomor_so=nomor_so,
+            customer_name=customer_name,
+            income=income,
+            outcome=outcome,
+            hutang_piutang=hutang_piutang,
+            totaltransaksi=totaltransaksi,
+        )
+
+        new_ledger.save()  # Save the object to the database
+
+        # Redirect to a different page (for example, a list page)
+        return redirect('ledger_list')
+
+    po_list = TblPurchaseOrder.objects.all()
+    so_list = TblSalesOrder.objects.all()
+    return render(request, "ledger_form.html", {
+        "po_list": po_list,
+        "so_list": so_list,
+        "today": timezone.now().astimezone(pytz_timezone('Asia/Jakarta')).date(),
+        "title" : "ADD LEDGER"
+    })
+
+def fetch_details(request):
+    nomor = request.GET.get("nomor")  # Get the selected PO/SO number
+    response = {}
+
+    if nomor:
+        try:
+            po = TblPurchaseOrder.objects.get(nomor_po=nomor)
+            response = {
+                "nama": po.vendor_name,
+                "type": "PO",  # Indicate this is a PO
+            }
+        except TblPurchaseOrder.DoesNotExist:
+            try:
+                so = TblSalesOrder.objects.get(nomor_so=nomor)
+                response = {
+                    "nama": so.customer_name,
+                    "type": "SO",  # Indicate this is an SO
+                }
+            except TblSalesOrder.DoesNotExist:
+                response = {"error": "PO/SO not found."}
+
+    return JsonResponse(response)
+
+
+
 def ledger_update(request, id):
-    purchase_order = get_object_or_404(TblLedger, id=id)
-    if request.method == 'POST':
-        form = LedgerForm(request.POST, instance=purchase_order)
+    ledger = get_object_or_404(TblLedger, id=id)
+
+    po_list = TblPurchaseOrder.objects.all()
+    so_list = TblSalesOrder.objects.all()
+
+    if request.method == "POST":
+        form = LedgerForm(request.POST, instance=ledger, po_list=po_list, so_list=so_list)
         if form.is_valid():
+            jakarta_tz = pytz_timezone('Asia/Jakarta')
+            if not form.instance.order_date:
+                form.instance.order_date = timezone.now().astimezone(jakarta_tz).date()
             form.save()
-            messages.success(request, 'Ledger berhasil diubah')
             return redirect('ledger_list')
     else:
-        form = LedgerForm(instance=purchase_order)
-    return render(request, 'ledger_form.html', {'form': form})
+        form = LedgerForm(instance=ledger, po_list=po_list, so_list=so_list)
+
+    # Get the initial value for 'nomor_po_so' (if exists)
+    initial_nomor = ledger.nomor_so if ledger.nomor_so else ''
+
+    jakarta_tz = pytz_timezone('Asia/Jakarta')
+    return render(request, 'ledger_form.html', {
+        'form': form,
+        'ledger': ledger,
+        'po_list': po_list,
+        'so_list': so_list,
+        'initial_nomor': initial_nomor,
+        'today': timezone.now().astimezone(jakarta_tz).date(),
+        "title" : "UPDATE LEDGER" # Add initial value here
+    })
 
 def ledger_detail(request, id):
     purchase_order = get_object_or_404(TblLedger, id=id)
