@@ -144,7 +144,13 @@ def customer_create(request):
 
 def customer_detail(request, id):
     customer = get_object_or_404(TblCustomer, id=id)
-    return render(request, 'customer_detail.html', {'customer': customer})
+    # sales_orders = TblSalesOrder.objects.filter(customer_name=customer.retail_name)
+    return render(request, 'customer_detail.html', {'customer': customer,})
+
+def customer_report (request, id):
+    customer = get_object_or_404(TblCustomer, id=id)
+    sales_orders = TblSalesOrder.objects.filter(customer_name=customer.retail_name)
+    return render(request, 'customer_report.html', {'customer': customer, 'sales_orders': sales_orders})
 
 def customer_update(request, id):
     customer = get_object_or_404(TblCustomer, id=id)
@@ -196,7 +202,13 @@ def vendor_create(request):
 
 def vendor_detail(request, id):
     vendor = get_object_or_404(TblVendor, id=id)
+    # purchase_orders = TblPurchaseOrder.objects.filter(vendor_name=vendor.company_name)
     return render(request, 'vendor_detail.html', {'vendor': vendor})
+
+def vendor_report(request, id):
+    vendor = get_object_or_404(TblVendor, id=id)
+    purchase_orders = TblPurchaseOrder.objects.filter(vendor_name=vendor.company_name)
+    return render(request, 'vendor_report.html', {'vendor': vendor, 'purchase_orders': purchase_orders})
 
 def vendor_update(request, id):
     vendor = get_object_or_404(TblVendor, id=id)
@@ -443,31 +455,40 @@ def ledger_list(request):
 
 # Create - Add a new sales order
 def ledger_create(request):
-    if request.method == "POST":
-        # Extract the form data from POST request
-        order_date = request.POST.get('order_date')
-        nomor_so = request.POST.get('nomor_so')
-        customer_name = request.POST.get('customer_name')
+    if request.method == 'POST':
+    #     form = LedgerForm(request.POST)
+    #     if form.is_valid():
+    #         form.save()
+    #         messages.success(request, 'Ledger berhasil ditambahkan')
+    #         return redirect('ledger_list')
+    # else:
+    #     form = LedgerForm()
+    # return render(request, 'ledger_form.html', {'form': form})
+#     if request.method == "POST":
+#         # Extract the form data from POST request
+#         order_date = request.POST.get('order_date')
+#         nomor_so = request.POST.get('nomor_so')
+#         customer_name = request.POST.get('customer_name')
 
-        try:
-            income = int(request.POST.get('income', 0))  # Default to 0 if empty
-        except ValueError:
-            income = 0  # If the conversion fails, set it to 0
+#         try:
+#             income = int(request.POST.get('income', 0))  # Default to 0 if empty
+#         except ValueError:
+#             income = 0  # If the conversion fails, set it to 0
 
-        try:
-            outcome = int(request.POST.get('outcome', 0))  # Default to 0 if empty
-        except ValueError:
-            outcome = 0
+#         try:
+#             outcome = int(request.POST.get('outcome', 0))  # Default to 0 if empty
+#         except ValueError:
+#             outcome = 0
 
-        try:
-            hutang_piutang = int(request.POST.get('hutang_piutang', 0))  # Default to 0 if empty
-        except ValueError:
-            hutang_piutang = 0
+#         try:
+#             hutang_piutang = int(request.POST.get('hutang_piutang', 0))  # Default to 0 if empty
+#         except ValueError:
+#             hutang_piutang = 0
 
-        try:
-            totaltransaksi = int(request.POST.get('totaltransaksi', 0))  # Default to 0 if empty
-        except ValueError:
-            totaltransaksi = 0
+#         try:
+#             totaltransaksi = int(request.POST.get('totaltransaksi', 0))  # Default to 0 if empty
+#         except ValueError:
+#             totaltransaksi = 0
 
         # Save the data to the Ledger model
         if not order_date:
@@ -499,32 +520,41 @@ def ledger_create(request):
         "title" : "ADD LEDGER"
     })
 
-def fetch_details(request):
-    nomor = request.GET.get("nomor")  # Get the selected PO/SO number
-    response = {}
+# def fetch_details(request):
+#     nomor = request.GET.get("nomor")  # Get the selected PO/SO number
+#     response = {}
 
-    if nomor:
-        try:
-            po = TblPurchaseOrder.objects.get(nomor_po=nomor)
-            response = {
-                "nama": po.vendor_name,
-                "type": "PO",  # Indicate this is a PO
-            }
-        except TblPurchaseOrder.DoesNotExist:
-            try:
-                so = TblSalesOrder.objects.get(nomor_so=nomor)
-                response = {
-                    "nama": so.customer_name,
-                    "type": "SO",  # Indicate this is an SO
-                }
-            except TblSalesOrder.DoesNotExist:
-                response = {"error": "PO/SO not found."}
+#     if nomor:
+#         try:
+#             po = TblPurchaseOrder.objects.get(nomor_po=nomor)
+#             response = {
+#                 "nama": po.vendor_name,
+#                 "type": "PO",  # Indicate this is a PO
+#             }
+#         except TblPurchaseOrder.DoesNotExist:
+#             try:
+#                 so = TblSalesOrder.objects.get(nomor_so=nomor)
+#                 response = {
+#                     "nama": so.customer_name,
+#                     "type": "SO",  # Indicate this is an SO
+#                 }
+#             except TblSalesOrder.DoesNotExist:
+#                 response = {"error": "PO/SO not found."}
 
-    return JsonResponse(response)
-
-
+#     return JsonResponse(response)
 
 def ledger_update(request, id):
+    # purchase_order = get_object_or_404(TblLedger, id=id)
+    # if request.method == 'POST':
+    #     form = LedgerForm(request.POST, instance=purchase_order)
+    #     if form.is_valid():
+    #         form.save()
+    #         messages.success(request, 'Ledger berhasil diubah')
+    #         return redirect('ledger_list')
+    # else:
+    #     form = LedgerForm(instance=purchase_order)
+    # return render(request, 'ledger_form.html', {'form': form})
+
     ledger = get_object_or_404(TblLedger, id=id)
 
     po_list = TblPurchaseOrder.objects.all()

@@ -125,7 +125,7 @@
                         style="width: 150px"
                     />
                 </div>
-                <a class="navbar-brand text-white" href="#">HOME PAGE</a>
+                <!-- <a class="navbar-brand text-white" href="#">HOME PAGE</a>
                 <button
                     class="navbar-toggler"
                     type="button"
@@ -136,7 +136,7 @@
                     aria-label="Toggle navigation"
                 >
                     <span class="navbar-toggler-icon"></span>
-                </button>
+                </button> -->
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
 
@@ -286,7 +286,7 @@
                                 <td>{{ vendor.phone_number }}</td>
                                 <td>
                                     <a
-                                        href="#"
+                                        href="{% url 'vendor_report' vendor.id %}"
                                         class="btn btn-primary btn-report btn-sm"
                                         >Report</a
                                     >
@@ -406,24 +406,27 @@
             }
         </script>
         <script>
-            $(document).ready(function() {
-                $('.delete_button').click(function(e) {
-                    e.preventDefault();
-                    var form =  $(this).closest("form");
-                    Swal.fire({
-                        title: "Are you sure?",
-                        text: "You won't be able to revert this!",
-                        icon: "warning",
-                        showCancelButton: true,
-                        confirmButtonColor: "#3085d6",
-                        cancelButtonColor: "#d33",
-                        confirmButtonText: "Yes, delete it!",
-                    }).then((result) => {
-
-                        form.submit();
-                    });
-                });
+             $(document).ready(function () {
+        $('.delete_button').click(function (e) {
+            e.preventDefault();
+            var form = $(this).closest("form");
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Jika tombol "Yes, delete it!" ditekan
+                    form.submit();
+                }
+                // Tidak ada aksi jika tombol "Cancel" ditekan
             });
+        });
+    });
         </script>
         <script>
             // Function to get the CSRF token from the cookie
